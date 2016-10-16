@@ -1,0 +1,99 @@
+@import "bootstrap";
+
+.body {
+  background: #DDD;
+}
+.text {
+  background-color: white;
+  width: 95%;
+  margin:0 auto;
+  margin-top:50px;
+  padding:50px 0 50px 0;
+  border-radius:10px
+}
+.header {
+  font-size: 30px;
+  color: white;
+  font-family: 'arial black';
+}
+#main_img {
+  background-image: url("http://rubyonrails.org/images/rails-logo.svg");
+  background-size: cover;
+  font-family: 'arial black';
+}
+body {
+  margin:0;
+  padding:0;
+  padding-bottom:50px;
+}
+.user {
+  width:90%;
+  margin:0 auto;
+  padding-top: 30px;
+}
+.login {
+  width:45%;
+  margin:0 auto;
+}
+.login a {
+  background:#808080;
+  color:white;
+  display:block;
+  padding: 5px;
+  text-align:center;
+  border-radius:20px;
+}
+.mypage {
+  width:45%;
+  float:left;
+}
+.mypage a {
+  background:#808080;
+  color:white;
+  display:block;
+  padding: 5px;
+  text-align:center;
+  border-radius:20px;
+  text-decoration: none;
+  font-size: 20px;
+}
+.log {
+  width:45%;
+  float:right;
+}
+.log a {
+  background:#808080;
+  color:white;
+  display:block;
+  padding: 5px;
+  text-align:center;
+  border-radius:20px;
+  text-decoration: none;
+  font-size: 20px;
+}
+.main {
+  clear:both;
+  margin-top:80px;
+}
+.main a {
+  font-size: 20px;
+}
+.main ul{
+  padding:0;
+  text-align:center;
+}
+.main li {
+  list-style:none;
+  width:90%;
+  text-align:left;
+  margin-right:auto;
+  margin-left:auto;
+  border-bottom: 1px solid #808080;
+  padding:5px;
+}
+.main li:nth-child(31) {
+  border-bottom:none;
+}
+.main li:nth-child(odd) {
+  background:#EEEEEE;
+}
