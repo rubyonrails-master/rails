@@ -1,2 +1,129 @@
-<h1>Welcome#login</h1>
-<p>Find me in app/views/welcome/login.html.erb</p>
+<body class="body">
+  <div class="text content">
+    <h1>ログイン機能とカラムの追加</h1>
+      <p>
+        この章では、ログイン機能を作成していきましょう。ログイン機能というとなんだか難しそうと思うかもしれませんが「gem」を使用すれば簡単にログイン機能を作成することができます。
+        今回は、前回の章でrails newで作成したアプリケーションpage内で行っていきます。
+        まず、Gemfileを開き下記画像のように<br>
+        gem 'devise'<br>
+        を最下行に追記しましょう。
+        <img src="image15.png">
+        gemを追記したらサーバーを停止して(「Control」+「C」)<br>
+        bundle install<br>
+        コマンドを実行しましょう。<br>
+        bundle installを実行すると、railsは「gemfile.lock」を元にgemのインストールを行います。
+        この時、「gemfile.lock」に記述されていない、且つgemfileに記述されているgemがある場合、そのgemとそのgemに関連するgemをインストール後、gemfile.lockを更新します。<br>
+        少し難しいかもしれませんがgemを追加したら、サーバーを停止してbundle isntallを実行すると覚えておけば大丈夫です。<br>
+        次に、deviseに関連したファイルを追加します。<br>
+        rails g devise:install<br>
+        <img src="image16.png">
+        deviseのモデルを作成します。
+        Railsアプリケーションでは、データベースを使ってデータの格納を行ないます。
+        Railsでデータベースとのやり取りを行なうために用意されているのがモデルです。
+        モデルはデータベースに含まれるテーブル毎に用意されます。
+        今回は、Userという名前でモデルを作成します。<br>
+        rails g devise user<br>
+        このコマンドを実行すると、db/migrate配下にマイグレーションファイルが作成されるので<br>
+        rake db:migrate<br>
+        コマンドを実行する。このコマンドは、未実行のマイグレーションファイルを実行するコマンドです。
+        <img src="image17.png">
+        <img src="image19.png">
+        deviseのビューファイルを作成します。<br>
+        rails g devise:views<br>
+        <img src="image18.png">
+        それでは、サーバーを再起動して確認してみましょう。
+        まず、TOPページを表示してこのページに<br>
+        ログインしていない時は、「サインアップ」リンクと「ログイン」リンクを表示して<br>
+        ログインしている時は、「アカウント編集」リンクと「ログアウト」リンクを表示するようにしましょう。<br>
+        まずは、「サインアップ」リンクと「ログイン」リンクを作成します。<br>
+        app/views/welcome/top.html.erbを開き下記画像のようにリンクを追記しましょう。<br>
+        <img src="image20.png">
+        この状態だとまだサインアップやログイン画面にはリンクは飛びません。リンクを飛ばすには、"#" の部分にルーティングを指定しなけれななりません。ルーティングの確認方法は<br>
+        rake routes
+        <img src="image21.png">
+        サインアップのルーティングは「new_user_registraion」で、ログインのルーティングは「new_user_session」です。"#"の部分をこのルーティングに書き換えましょう。
+        また、このアクションを呼び出すためのリンクを作成する場合にはルーティング名に「_path」を指定して下さい。
+        <img src="image22.png">
+        これでサインアップ画面とログイン画面に遷移するリンクは完成しました。
+        では、実際にサインアップ画面からサインアップしてみてください。
+        サインアップするとデフォルトの画面が表示されると思います。
+        このデフォルト画面をTOPページになるように変更しましょう。<br>
+        config/routes.rbを開き<br>
+        get "top" => "welcome#top" の部分を<br>
+        root "welcome#top"<br>
+        に変更しましょう。これでデフォルトページの場所にTOPページが表示されるはずです。
+        <img src="image23.png">
+        現在、ログインしている状態なのにサインアップリンクとログインリンクが表示されたままの状態になっています。
+        これをログインしている時は、「アカウント編集」リンクと「ログアウト」リンクを表示するようにしていきましょう。
+        まずはルーティングを確認してアカウント編集リンクとログアウトリンクを作成しましょう。<br>
+        link_toメソッドはデフォルトでgetが指定されているのでログアウトの場合は、deleteを指定する記述をしなくてはなりません。
+        <img src="image24.png">
+        次にログインしていたら、ログインしていなかったらの部分を記述していきます。これはif文を使用します。<br>
+        if user_signed_in? (⇦ ユーザーがログインしていたら)<br>
+        ユーザーがログインしていた時に表示する文字列<br>
+        else (⇦ それ以外だったら)<br>
+        ユーザーがログインしていない時に表示する文字列<br>
+        end
+        <img src="image25.png">
+        これで、サインアップ、ログイン、アカウント編集、ログアウトは終了です。<br>
+        次にusersテーブルにカラムの追加を行いましょう。
+        現在、usersテーブルにはどんなカラムがあるのか確認してみましょう。<br>
+        rails db<br>
+        select * from users;<br>
+        <img src="image26.png">
+        このusersテーブルにnameカラムとimageカラムを追加します。<br>
+        rails g add_カラム名_to_テーブル名 カラム名:型名<br>
+        rails g add_name_to_users name:string<br>
+        rails g add_image_to_users image:string
+        <img src="image27.png">
+        追加したらマイグレーションファイルが作成されるので<br>
+        rake db:migrateコマンドを実行しましょう。<br>
+        次にdeviseはデフォルトでemailとpasswordの値しか保存できないようになっています。
+        nameとimage野値を保存した場合は、<br>
+        app/controllers/application_controller.rbを開き下記画像のようにメソッドを作成し
+        before_actionで呼び出す必要があります。
+        これはストロングパラメータのようなものです。
+        ストロングパラメータとは、簡単に言うと脆弱性対策です。
+        外部から値を書き換えられないようにするために設定しています。<br>
+        <br>
+        before_action :configure_permitted_parameters, if: :devise_controller?<br>
+        <br>
+        protected<br>
+        <br>
+        def configure_permitted_parameters<br>
+          devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :image])<br>
+          devise_parameter_sanitizer.permit(:account_update, keys: [:name, :image])<br>
+        end<br>
+        <img src="image28.png">
+        nameの設定はこれでOKなのですがimageの設定はまだ必要です。
+        まずは、画像をアップロードするときに必要なgemを追加します。<br>
+        gem 'carrierwave'<br>
+        gem 'rmagick'
+        <img src="image29.png">
+        gemを追加したのでサーバーを停止してbundle installを実行しましょう。<br>
+        次にアップローダーを作成します。<br>
+        rails g uploader image
+        <img src="image30.png">
+        作成された app/uploaders/image_uploader.rbを開き下記画像のように変更しましょう。
+        <img src="image31.png">
+        最後に app/models/user.rbを開き下記画像のようにアップローダー（ImageUploader）と紐付けをする<br>
+        mount_uploader :image, ImageUploader
+        <img src="image32.png">
+        それでは、サインアップ画面とアカウント編集画面で画像を選択名前を入力できる欄を<br>
+        app/views/devise/registrations/new.html.erbとedit.html.erbに下記画像のように追記しましょう。<br>
+        edit.html.erbで、image_tag(current_user.image) という記述がありますがこれは現在ログインしているユーザーの画像を表示する記述です。
+        <img src="image33.png">
+        <img src="image34.png">
+        ログインしたらアカウント編集画面に行き名前と画像が表示されていればOKです<br>
+        以上でログイン機能とカラムの追加は終了です。お疲れ様です。
+
+
+
+
+
+
+
+      </p>
+
+  </div>
+</body>

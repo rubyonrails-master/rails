@@ -4,14 +4,10 @@ Rails.application.routes.draw do
 
 root 'welcome#index'
 get "environment" => "welcome#environment"#開発環境
-get "top_about" => "welcome#top_about"#TOP,ABOUT
+get "top" => "welcome#top"#TOP,ABOUT
 get "login" => "welcome#login"#ログイン機能
+get "blog" => "welcome#blog"#ブログ、ページネーション、日本語化、バリデーション、検索、アソシエーション
 get "bootstrap" => "welcome#bootstrap"#bootstrap
-get "ja" => "welcome#ja"#日本語化
-get "blog" => "welcome#blog"#ブログ
-get "validates" => "welcome#validates"#バリデーション
-get "search" => "welcome#search"#検索
-get "association" => "welcome#association"#アソシエーション
 get "release" => "welcome#release"#公開
 get "contact" => "welcome#contact"#お問い合わせ
 get "authentication" => "welcome#authentication"#メール認証ログイン
@@ -27,7 +23,6 @@ get "notification" => "welcome#notification"#通知
 get "ranking" => "welcome#ranking"#ランキング
 get "purchase" => "welcome#purchase"#ECサイト
 get "evaluation" => "welcome#evaluation"#評価サイト
-get "rspec" => "welcome#rspec"#Rspec
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

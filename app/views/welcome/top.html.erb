@@ -1,0 +1,60 @@
+<body class="body">
+  <div class="text content">
+    <h1>TOPページ作成</h1>
+    <p>
+      この章では、TOPページを作成してリンクで行き来できるようにしていきましょう。
+      まずは、アプリケーションを作成しましょう。<br>
+      今回は、アプリケーション名を「page」、データベースは「postgresql」を使用します。
+      データベースとは、特定のテーマに沿ったデータを集めて効率的に管理し、使いやすくしたものです。
+      Webサイトでのユーザー情報やECサイト上の商品情報を整理したり抽出するためなどに使われます。<br>
+      rails new アプリケーション名 -d データベース名<br>
+      rails new page -d postgresql<br>
+      このコマンドを実行すると下記の画像のようにアプリケーションに最低限必要なフォルダやファイルを自動的に作成されます。
+      <img src="image7.png">
+      「page」というディレクトリが作成されてその配下には
+      「app」「bin」「config」「db」「lib」「log」「public」「test」「tmp」「vendor」ディレクトリが存在します。
+      今のところ必要なのは「app」「config」「db」「public」ディレクトリだけです。それと「Gemfile」は必要になります。<br>
+      それでは、まずはデフォルトページを表示させましょう。デフォルトページとは下記の画像のようなページです。
+      開発はこのページを表示させてから行います。
+      <img src="image8.png">
+      まずは、アプリケーションがある「page」ディレクトリに移動しましょう。<br>
+      cd page<br>
+      次に、postgresqlを起動しましょう。<br>
+      sudo service postgresql start<br>
+      sudo sudo -u postgres psql<br>
+      postgres=# CREATE USER ubuntu SUPERUSER;<br>
+      「comtrol」+「D」で抜けられます。<br>
+      次に、config/database.ymlを開き<br>
+      template: template0 を追記します。
+      <img src="image9.png">
+      次にdatabase.ymlの内容でデータベースを作成するコマンドを打ちましょう。<br>
+      rake db:create<br>
+      最後にサーバーを起動しましょう。<br>
+      rails s -b $IP -p $PORT<br>
+      サーバー起動のコマンドを打つとURLが表示されるので押下するとデフォルトページが表示されるはずです。<br>
+      少し面倒くさかったと思いますがこれはCloud9だけの設定なのであまり覚えなくても大丈夫です。
+      ローカル開発環境を構築すれば<br>
+      「rake db:create」と「rails s」コマンドを実行すればデフォルトページは表示されます。<br>
+      デフォルトページが表示されたのでTOPページを作成していきましょう。<br>
+      config/routes.rbファイルを開いてルーティングを設定していきましょう。下記画像のように追記しましょう。<br>
+      get "top" => "welcome#top"
+      <img src="image10.png">
+      getは、HTTPメソッドです。
+      "top"は、パスを指定しています。
+      "welcome#top"は、welcomeコントローラーとtopアクションを指定しています。<br>
+      次にコントローラーを作成しましょう。<br>
+      rails g controller welcome
+      <img src="image11.png">
+      app/controllers/welcome_controller.rbを開きtopアクションを記述しましょう。
+      <img src="image12.png">
+      これは、WelcomeControllerというクラスを記述したものです。WelcomeControllerクラスはApplicationControllerクラスを継承しています。このようにRailsでは、コントローラーを１つのRubyクラスで表します。<br>
+      WelcomeControllerクラスの中には、topメソッドを記述します。このtopメソッドがTopページを表示するときに呼ばれる「アクション」になります。<br>
+      次は、実際にブラウザに表示するビューの部分を作成しましょう。
+      app/views/welcomeディレクトリに「top.html.erb」ファイルを作成し編集しましょう。
+      <img src="image13.png">
+      編集したらサーバーを起動してデフォルトページのURLに /top を追加するとTOPページが表示されます。
+      <img src="image14.png">
+      以上でTOPページ作成は終了です。お疲れ様です。
+    </p>
+  </div>
+</body>

@@ -6,7 +6,7 @@ class WelcomeController < ApplicationController
   def environment
   end
 
-  def top_about
+  def top
   end
 
   def login
@@ -15,19 +15,7 @@ class WelcomeController < ApplicationController
   def bootstrap
   end
 
-  def ja
-  end
-
   def blog
-  end
-
-  def validates
-  end
-
-  def search
-  end
-
-  def association
   end
 
   def release
@@ -75,6 +63,4 @@ class WelcomeController < ApplicationController
   def evaluation
   end
 
-  def rspec
-  end
 end
