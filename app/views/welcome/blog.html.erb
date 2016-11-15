@@ -47,7 +47,49 @@
         「Tweet.new」の「.new」とは「Tweet」の中にある「title」や「content」などの空のものを「@tweet」に格納しています。
         ブログの作成画面では、ユーザーがtitle欄やcontent欄に入力したものが保存されるので、titleやcontentは空でないといけないですよね。<br>
         次に、「new.html.erb」を作成して下記画像のように記述しましょう。
-        
+        <img src="image41.png">
+        作成したらブラウザで確認しましょう。入力欄ができているはずです。
+        titleとcontentの欄を入力して「create tweet」ボタンを押下するとcreateアクションに飛んで保存させます。なので次は、
+        tweets_controller.rbに戻ってcreateアクションを確認しましょう。<br>
+        「Tweet.new(tweet_params)」の「tweet_params」とは何なのか？
+        これは、保存する値を指定していて保存する値は「private」下に
+        「params.require(:tweet).permit(:title, :content)」と別で記述しています。
+        これは、ストロングパラメータと言ってセキュリティ対策です。保存する値をcreateアクション内に記述してしまうとセキュリティ上あまくなってしまうので
+        保存する値は別で記述しています。<br>
+        「if @tweet.invalid?」とは、もしバリデーションに引っかかったらと言う意味です。バリデーションは後で説明します。
+          「render "new"」バリデーションに引っかかったら「new」に戻る、つまりブログの作成画面に戻ります。<br>
+        「else」でそれ以外の場合、つまりバリデーションに引っかからなかった場合は<br>
+          「@tweet.save」で保存して<br>
+          「redirect_to tweets_path」保存した後は一覧画面に飛ばすようにしています。if文を記述した時は最後にendを忘れずに。<br>
+          そして先ほどのバリデーションについてですが、
+          バリデーションとは、データベースに保存される前にそのデータが正しいかどうかを検証する仕組みのことです。
+          実際にバリデーションを記述してみましょう。<br>
+          app/models/tweet.rbを開き下記画像のように追記しましょう。
+          <img src="image42.png">
+          これは、titleが未入力の場合は、contentが未入力で5文字以上、50文字以下でないと保存されないように記述しています。
+          この条件にクリアした場合のみ保存されるようになります。<br>
+          最後に一覧ページにブログの作成画面に遷移するリンクを作成しましょう。<br>
+          次に詳細画面を作成しましょう。
+          app/controllers/tweets_controller.rbに戻りshowアクションを確認しましょう。<br>
+          「find」でデータベースからデータを検索して「params[:id]」でパラメータ名「id」で取得することができます。<br>
+          app/views/tweets配下にshow.html.erbファイルを作成し下記画像のように記述しましょう。
+          <img src="image43.png">
+          次に一覧画面で詳細画面に遷移するリンクを作成しましょう。
+          <img src="image44">
+          titleが表示される文言に詳細へ遷移するリンクを作成しこれで詳細画面へ行き来することができました。<br>
+          次に編集画面を作成ましましょう。
+          app/controllers/tweets_controller.rbに戻りeditアクションを確認しましょう。
+          showアクションと同じなので説明は省きます。<br>
+          app/views/tweets配下に「edit.html.erb」ファイルを作成し下記画像のように記述しましょう。
+          <img src=""
+
+
+
+
+
+
+
+
 
 
 
