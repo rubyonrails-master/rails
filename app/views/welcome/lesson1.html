@@ -1,0 +1,654 @@
+<div class="lesson">
+  <div class="main">
+    <h1>LESSON1</h1>
+      <p>
+        この章では、TOPページとABOUTページを作成しリンクで行き来出来るようにした後に、メールでのアカウント認証付きのログイン機能を作成していきます。<br>
+        まず、最初にプログラミングを勉強しようと思った際に必要になるのは、コードを書いて実行結果を見ることができる開発環境の構築です。
+        なので、さっそく開発環境の構築からしていきましょう、、、と言いたいところですが<br>
+        初心者にとってこの開発環境の構築は最初のハードルです。この開発環境の構築でつまずいて挫折する方もいらっしゃるのではないでしょうか。
+        今回は、そんな方でもブラウザだけあれば簡単に開発環境が作れるCloud9というツールを使っていきます。<br>
+        Cloud9とは、アプリケーションの開発やデータベースなどをクラウド環境で利用できるサービスです。
+        統合開発環境(IDE)と呼ばれるもので、様々な便利機能が集約されています。<br>
+        簡単に説明すると「WEBアプリケーション開発ができる状態を簡単に用意できてしまうツール」です。<br>
+       （<a href="http://www.sejuku.net/blog/385" target="_blank">Cloud9登録手順</a>）に詳しく手順が記載されているので登録しましょう。<br>
+       Cloud9を登録をして新しくWorkspaceを作成するとたくさんのフォルダが出来ていると思います。
+       この中で頻繁に使うことになるのは、「app」「config」「db」です。<br>
+       「app」モデル、ビュー、コントローラーのコード。<br>
+       「config」ルーティングやデータベースなどの設定ファイル。<br>
+       「db」マイグレーションスクリプトやシードデータ。<br>
+       <br>
+       下記コマンドを実行するとWEBrickというRubyで書かれたウェブサーバーが立ち上がります。
+       URLにアクセスして「Welcome aboard」画面が表示されていればOKです。
+       このようにrailsのアプリケーション開発では、WEBrickを使って行っていきます。<br>
+        <div class="command">
+          <p>rails s -b $IP -p $PORT</p>
+        </div>
+        それでは、TOPページとABOUTページを作成します。<br>
+        まず最初に、コントローラーとアクションの作成です。下記コマンドを実行するとwelcomeコントローラーとtopアクション、aboutアクションを作成することが出来ます。
+        <div class="command">
+          <p>
+            rails g controller welcome top about
+          </p>
+        </div>
+        上記のコマンドを実行するとapp/controllers配下にwelcome_controller.rbというファイルが作成されているので開くと下記のように記述されています。
+        <div class="code">
+          <p>
+            class WelcomeController < ApplicationController<br>
+            　def top<br>
+            　end<br>
+            <br>
+            　def about<br>
+            　end<br>
+            end
+          </p>
+        </div>
+        WelcomeControllerクラスがAppicationControllerクラスを継承しています。
+        また、WelcomeControllerクラスの中には、topメソッドとaboutメソッドがあります。topメソッドはトップページを表示するときに呼ばれるアクションで
+        aboutメソッドはaboutページを表示するときに呼ばれるメソッドです。<br>
+        次は、URLのパスとコントローラーを結びつけるルーティングを設定をします。
+        config/database.ymlを開き下記のようにを記述します。
+        <div class="code">
+          <p>
+            root "welcome#top"<br>
+            get "about" => "welcome#about"
+          </p>
+        </div>
+        rootメソッドを使うことでトップページ(Welcome aboard画面が表示されているページ)に対応するコントローラーとアクションがWelcomeコントローラーの
+        topアクションになりました。<br>
+        getとは、HTTPメソッドのことです。railsでは、他に「post」「patch」「delete」がよく使われます。<br>
+        ブラウザのアドレス欄にURLを入力したり、リンクをクリックしたりするとGETメソッドでリクエストが送られます。
+        GETメソッドは、ウェブサーバーからデータを取得する時に使い、POSTメソッドはウェブサーバーの状態を変更する時に使います。(ブログを投稿するなど)、
+        PATCHメソッドは、更新する時に使います。(ブログを編集する時など)、DELETEメソッドは削除するする時に使います。(ブログを削除するなど)<br>
+        <br>
+        HTTPメソッドの後に「"about"」と指定することで「/about」でWelcomeコントローラーのaboutアクションが呼ばれるようになります。<br>
+        それでは、サーバーを起動して「Welcome aboard」画面をリロードして見てみましょう。ページが変わっていると思います。これは、何が呼ばれているかというと
+        app/views配下にある「top.html.erb」ファイルの内容が呼ばれて表示されています。これもコントローラー作成時に自動で作成されるファイルです。<br>
+        次にAboutページを見てみましょう。URLに「/about」を付けてアクセスするとAboutページが表示されるはずです。<br>
+        <br>
+        ここまでで少し復習しましょう。<br>
+        railsでは、URLを入力してページを表示する際やリンクをクリックしてページを表示する際などにまず最初に呼ばれるファイルは、
+        config/routesファイルです。ここでHTTPメソッドは何なのか、パスは何なのか、コントローラーとアクションは何なのか判別します。<br>
+        次に、そのコントローラーのアクションへ行きデータベースとのやりとりがある場合はモデルへ行き、なかった場合はビューへいきます。
+        今回はデータベースとのやりとりがないのでそのままビューへ行きます。そしてそのビューファイルに記述してある内容がブラウザに表示されます。
+        簡単に説明するとこのような流れになっています。<br>
+        <br>
+        それでは次に、トップページとAboutページでリンクで行き来出来るように実装しましょう。<br>
+        app/views/top.html.erbファイルを開き下記のように記述しましょう。
+        <div class="code">
+          <p>
+            <%= link_to "About", about_path %>
+          </p>
+        </div>
+        リンクを作成する際は「link_to」を使い、"文字列"、パスを指定してあげます。パスの確認方法は下記のコマンドで確認できます。
+        <div class="command">
+          <p>
+            rake routes
+          </p>
+        </div>
+        これでトップページからAboutページへ遷移するリンクが出来ました。
+        同様にAboutページからトップページに遷移するリンクも作成してください。<br>
+        これでTOPページとAboutページの作成は完成です。
+        <br>
+        <br>
+        次に、メールでのアカウント認証付きのログイン機能を作成します。
+        まずは、ログイン機能を作成するのでGemfileというファイルを開き最下行にのgemを追加しましょう。
+        <div class="code">
+          <p>
+            gem "devise"
+          </p>
+        </div>
+        gemを追加したら必ず下記コマンドを実行した後にサーバーを再起動しましょう。
+        <div class="command">
+          <p>
+            bundle install
+          </p>
+        </div>
+        次に下記コマンドを実行してdeviseの初期設定を行います。
+        <div class="command">
+          <p>
+            rails g devise:install
+          </p>
+        </div>
+        次に下記コマンドを実行してdeviseのviewを作成します。
+        <div class="command">
+          <p>
+            rails g devise:views
+          </p>
+        </div>
+        次に下記コマンドを実行してuserモデルとマイグレーションファイルを作成します。
+        <div class="command">
+          <p>
+            rails g devise user
+          </p>
+        </div>
+        上記コマンドを実行するとdb/migrate配下にマイグレーションファイルが作成され下記のように記述されています。
+        <div class="code">
+          <p>
+            class DeviseCreateUsers < ActiveRecord::Migration[5.0]<br>
+            　def change<br>
+            　　  create_table :users do |t|<br>
+            　　    ## Database authenticatable<br>
+            　 　   t.string :email,              null: false, default: ""<br>
+            　  　  t.string :encrypted_password, null: false, default: ""<br>
+                <br>
+            　   　 ## Recoverable<br>
+            　    　t.string   :reset_password_token<br>
+            　　    t.datetime :reset_password_sent_at<br>
+                <br>
+            　　    ## Rememberable<br>
+            　　    t.datetime :remember_created_at<br>
+                <br>
+            　　    ## Trackable<br>
+            　　    t.integer  :sign_in_count, default: 0, null: false<br>
+            　 　   t.datetime :current_sign_in_at<br>
+            　  　  t.datetime :last_sign_in_at<br>
+        　    　    t.string   :current_sign_in_ip<br>
+        　    　    t.string   :last_sign_in_ip<br>
+                <br>
+        　    　    ## Confirmable<br>
+        　    　    # t.string   :confirmation_token<br>
+        　    　    # t.datetime :confirmed_at<br>
+        　    　    # t.datetime :confirmation_sent_at<br>
+        　    　    # t.string   :unconfirmed_email # Only if using reconfirmable<br>
+                <br>
+        　    　    ## Lockable<br>
+        　    　    # t.integer  :failed_attempts, default: 0, null: false # Only if lock strategy is :failed_attempts<br>
+        　    　    # t.string   :unlock_token # Only if unlock strategy is :email or :both<br>
+        　    　    # t.datetime :locked_at<br>
+                <br>
+                <br>
+        　    　    t.timestamps null: false<br>
+            　 　 end<br>
+              <br>
+        　    　  add_index :users, :email,                unique: true<br>
+        　    　  add_index :users, :reset_password_token, unique: true<br>
+        　    　  # add_index :users, :confirmation_token,   unique: true<br>
+        　    　  # add_index :users, :unlock_token,         unique: true<br>
+          　  end<br>
+          end
+        </p>
+      </div>
+      メール認証機能を有効化するには、migrationファイルで、## Confirmableの部分をアンコメントし、userモデルに:confirmableを追加します。
+      <div class="code">
+        <p>
+          class DeviseCreateUsers < ActiveRecord::Migration[5.0]<br>
+          　def change<br>
+          　　  create_table :users do |t|<br>
+          　　    ## Database authenticatable<br>
+          　 　   t.string :email,              null: false, default: ""<br>
+          　  　  t.string :encrypted_password, null: false, default: ""<br>
+              <br>
+          　   　 ## Recoverable<br>
+          　    　t.string   :reset_password_token<br>
+          　　    t.datetime :reset_password_sent_at<br>
+              <br>
+          　　    ## Rememberable<br>
+          　　    t.datetime :remember_created_at<br>
+              <br>
+          　　    ## Trackable<br>
+          　　    t.integer  :sign_in_count, default: 0, null: false<br>
+          　 　   t.datetime :current_sign_in_at<br>
+          　  　  t.datetime :last_sign_in_at<br>
+      　    　    t.string   :current_sign_in_ip<br>
+      　    　    t.string   :last_sign_in_ip<br>
+              <br>
+      　    　    ## Confirmable<br>
+      　    　    t.string   :confirmation_token<br>
+      　    　    t.datetime :confirmed_at<br>
+      　    　    t.datetime :confirmation_sent_at<br>
+      　    　    t.string   :unconfirmed_email # Only if using reconfirmable<br>
+              <br>
+      　    　    ## Lockable<br>
+      　    　    # t.integer  :failed_attempts, default: 0, null: false # Only if lock strategy is :failed_attempts<br>
+      　    　    # t.string   :unlock_token # Only if unlock strategy is :email or :both<br>
+      　    　    # t.datetime :locked_at<br>
+              <br>
+              <br>
+      　    　    t.timestamps null: false<br>
+          　 　 end<br>
+            <br>
+      　    　  add_index :users, :email,                unique: true<br>
+      　    　  add_index :users, :reset_password_token, unique: true<br>
+      　    　  # add_index :users, :confirmation_token,   unique: true<br>
+      　    　  # add_index :users, :unlock_token,         unique: true<br>
+        　  end<br>
+        end
+      </p>
+    </div>
+    マイグレーションファイルはこれでOKなので下記コマンドを実行しましょう。
+    <div class="command">
+      <p>
+        rails db:migrate
+      </p>
+    </div>
+    ログイン機能はこれでもう出来ているので一度サーバーを立ち上げて確認してみましょう。
+    「rake routes」コマンドでルーティングを確認してサインアップ画面にアクセスしてみてください。<br>
+    次にapp/models/user.rbを開き「:confirmable」を追加します。
+    <div class="code">
+      <p>
+        class User < ApplicationRecord<br>
+        　  # Include default devise modules. Others available are:<br>
+        　  # :confirmable, :lockable, :timeoutable and :omniauthable<br>
+        　  devise :database_authenticatable, :registerable,<br>
+        　         :recoverable, :rememberable, :trackable, :validatable, :confirmable<br>
+        end
+      </p>
+    </div>
+    deviseの初期設定をした際のメッセージに従いconfig/initializer/development.rbファイルに下記のように記述します。
+    <div class="code">
+      <p>
+        config.action_mailer.default_url_options = { :host => 'localhost:3000' }
+      </p>
+    </div>
+    送信メールの確認方法は「letter_opener」というgemを追加して確認します。Gemfileを開き下記のようにに記述します。
+    <div class="code">
+      <p>
+        gem "letter_opener"
+      </p>
+    </div>
+    config/routes.rbを開き下記のうように記述します。
+    <div class="code">
+      <p>
+        if Rails.env.development?<br>
+        　mout LetterOpenerWeb::Engine, at: '/letter_opener'<br>
+        end
+      </p>
+    </div>
+    これで「/letter_opener」にアクセスすることで送信されたメールを確認することが出来るようになります。<br>
+    gemを追加したのでbundle installを実行してサーバーを再起動しましょう。
+    次にconfig/environments/development.rbに下記のうように記述します。
+    <div class="code">
+      <p>
+        config.action_mailer.delivery_method = :letter_opener_web
+      </p>
+    </div>
+    メールの本文は、app/vies/devise/mailer配下にあるので確認しましょう。
+    これで、メールでのアカウント認証付きログイン機能は完成したのでサーバーを起動して確認してみて下さい。<br>
+    また、ログインした時にトップ画面に何も表示されないのでログインしていない時は、トップ画面に
+    サインアップリンクとログインリンクを表示させて、<br>
+    ログインしている時は、ログアウトリンクを表示させるようにしましょう。<br>
+    app/views/welcome/top.html.erbファイルを開き下記のように記述します。
+    <div class="code">
+      <p>
+        <% if user_signed_in? %><br>
+        　<%= link_to "ログアウト", destroy_user_session_path, method: :delete %><br>
+        <% else %><br>
+        　<%= link_to "サインアップ", new_user_registration_path %><br>
+        　<%= link_to "ログイン", new_user_session_path %><br>
+        <% end %>
+      </p>
+    </div>
+    ユーザーがログインしている時は、ログアウト<br>
+    それ以外つまりログインしていない時は、サインアップ、ログインを表示するようにしています。<br>
+    ログアウトの「method: :delete」という記述は、「link_to」でリンクを作成する時、HTTPメソッドはデフォルトで、GETになるので
+    このような記述をしています。
+    <br>
+
+    次に、日本語化を実装します。現在サインアップ画面で何も入力せずにサインアップしようとすると英語のエラーメッセージが表示されると思います。
+    これを日本語のエラーメッセージで表示されるようにしていきます。<br>
+    config/application.rbを開き「class Application < Rails::Application」内に下記を追記します。
+    <div class="code">
+      <p>
+        config.i18n.default_locale = :ja
+      </p>
+    </div>
+    次に、config/locales配下に「devise.ja.yml」ファイルと「js.yml」ファイルを作成します。<br>
+    devise.ja.ymlファイルには下記をコピペしてください。
+    <div class="code">
+      <p>
+        ja:<br>
+          devise:<br>
+            confirmations:<br>
+              confirmed: "アカウントが確認されました。ログインしています。"<br>
+              send_instructions: "アカウントの確認方法を数分以内にメールでご連絡します。"<br>
+              send_paranoid_instructions: "ご登録のメールアドレスが保存されている場合、アカウントの確認方法をメールでご連絡します。"<br>
+            failure:<br>
+              already_authenticated: "既にログインしています。"<br>
+              inactive: "Your account is not activated yet."<br>
+              invalid: "Invalid email or password."<br>
+              locked: "アカウントがロックされています。"<br>
+              last_attempt: "あなたのアカウントがロックされる前に、もう1つの試みを持っています。"<br>
+              not_found_in_database: "メールアドレスまたはパスワードが無効です。"<br>
+              timeout: "一定時間が経過したため、再度ログインが必要です"<br>
+              unauthenticated: "ログインまたは登録が必要です。"<br>
+              unconfirmed: "本登録を行ってください。"<br>
+            mailer:<br>
+              confirmation_instructions:<br>
+                subject: "アカウントの登録方法"<br>
+              reset_password_instructions:<br>
+                subject: "パスワードの再設定"<br>
+              unlock_instructions:<br>
+                subject: "アカウントのロック解除"<br>
+            omniauth_callbacks:<br>
+              failure: "%{kind} から承認されませんでした。理由：%{reason}"<br>
+              success: "%{kind} を利用してログインしました。"<br>
+              success_relation: "%{kind} とアカウントを連携しました"<br>
+            passwords:<br>
+              no_token: "このページにアクセスする事が出来ません。正しいURLでアクセスしている事を確認して下さい。"<br>
+              send_instructions: "パスワードのリセット方法を数分以内にメールでご連絡します。"<br>
+              send_paranoid_instructions: ""<br>
+              updated: "パスワードを変更しました。"<br>
+              updated_not_active: "パスワードを変更しました。"<br>
+            registrations:<br>
+              destroyed: "アカウントを削除しました。またのご利用をお待ちしております。"<br>
+              signed_up: "アカウント登録を受け付けました。"<br>
+              signed_up_but_inactive: "アカウントは登録されていますが、アクティブになっていないため利用できません。"<br>
+              signed_up_but_locked: "アカウントは登録されていますが、ロックされているため利用できません。"<br>
+              signed_up_but_unconfirmed: "確認メールを登録したメールアドレス宛に送信しました。リンクを開いてアカウントを有効にして下さい。"<br>
+              update_needs_confirmation: "アカウント情報が更新されました。更新の確認メールを新しいメールアドレス宛に送信しましたので、リンクを開いて更新を有効にして下さい。"<br>
+              updated: "アカウントが更新されました。"<br>
+            sessions:<br>
+              signed_in: "ログインしました。"<br>
+              signed_out: "ログアウトしました。"<br>
+            unlocks:<br>
+              send_instructions: "アカウントのロックを解除する方法を数分以内にメールでご連絡します。"<br>
+              send_paranoid_instructions: "アカウントが存在する場合、ロックを解除する方法をメールでご連絡します。"<br>
+              unlocked: "アカウントのロックが解除されました。ログインしています。"<br>
+          errors:<br>
+            messages:<br>
+              already_confirmed: "は既に登録済みです。ログインしてください"<br>
+              confirmation_period_expired: "%{period}以内に確認する必要がありますので、新しくリクエストしてください。"<br>
+              expired: "有効期限切れです。再申請してください。"<br>
+              not_found: "は見つかりませんでした。"<br>
+              not_locked: "ロックされていません。"<br>
+              not_saved:<br>
+                one: "エラーにより、この %{resource} を保存できません："<br>
+                other: "%{count} 個のエラーにより、この %{resource} を保存できません："<br>
+              taken: "は既に使用されています。"<br>
+              blank: "が入力されていません。"<br>
+              too_short: "は%{count}文字以上に設定して下さい。"<br>
+              too_long: "は%{count}文字以下に設定して下さい。"<br>
+              invalid: "は有効でありません。"<br>
+              confirmation: "が内容とあっていません。"
+            </p>
+          </div>
+          ja.ymlファイルには下記をコピペしてください
+          <div class="code">
+            <p>
+              ja:<br>
+                activerecord:<br>
+                  errors:<br>
+                    messages:<br>
+                      record_invalid: "バリデーションに失敗しました: %{errors}"<br>
+                      restrict_dependent_destroy:<br>
+                        has_one: "%{record}が存在しているので削除できません"<br>
+                        has_many: "%{record}が存在しているので削除できません"<br>
+                  attributes:<br>
+                      user:<br>
+                        password: パスワード<br>
+                        password_confirmation: パスワード確認<br>
+                        email: メールアドレス<br>
+                devise:<br>
+                  confirmations:<br>
+                    confirmed: 'アカウントを登録しました。'<br>
+                    send_instructions: '登録方法を数分以内にメールでご連絡します。'<br>
+                    send_paranoid_instructions: 'もしあなたのEメールアドレスが見つかった場合、本人確認についてのメールが数分以内に送られます。'<br>
+                  failure:<br>
+                    already_authenticated: '既にログインしています。'<br>
+                    inactive: 'アカウントがアクティベートされていません。'<br>
+                    invalid: 'メールアドレスかパスワードが違います。'<br>
+                    invalid_token: '認証キーが不正です。'<br>
+                    locked: 'あなたのアカウントは凍結されています。'<br>
+                    not_found_in_database: 'メールアドレスかパスワードが違います。'<br>
+                    timeout: 'セッションがタイムアウトしました。もう一度ログインしてください。'<br>
+                    unauthenticated: 'ログインしてください。'<br>
+                    unconfirmed: '本登録を行ってください。'<br>
+                  mailer:<br>
+                    confirmation_instructions:<br>
+                      subject: 'アカウントの登録方法'<br>
+                    reset_password_instructions:<br>
+                      subject: 'パスワードの再設定'<br>
+                    unlock_instructions:<br>
+                      subject: 'アカウントの凍結解除'<br>
+                  omniauth_callbacks:<br>
+                    success: '%{kind} アカウントによる個人認証に成功しました。'<br>
+                    failure: '%{kind} アカウントによる個人認証に失敗しました（%{reason}）。'<br>
+                  passwords:<br>
+                    no_token: "このページにはアクセスできません。パスワード復元メールのリンクをコピーした場合には、正しい URL かどうかをお確かめください。"<br>
+                    send_instructions: 'パスワードのリセット方法を数分以内にメールでご連絡します。'<br>
+                    send_paranoid_instructions: "もしあなたのEメールアドレスが見つかった場合、パスワード復元用のメールが数分以内に送られます。"<br>
+                    updated: 'パスワードを変更しました。'<br>
+                    updated_not_active: 'パスワードが正しく変更されました。'<br>
+                  registrations:<br>
+                    destroyed: 'アカウントを削除しました。またのご利用をお待ちしております。'<br>
+                    signed_up: 'ようこそ！ アカウント登録を受け付けました。'<br>
+                    signed_up_but_inactive: 'アカウント登録を受け付けました。しかしまだ有効化されておらず、ログインできません。'<br>
+                    signed_up_but_locked: 'アカウント登録を受け付けました。しかし、アカウントが凍結されているためログインできません。'<br>
+                    signed_up_but_unconfirmed: '本人確認用のメールがあなたのEメールアドレスに送られました。メール内のリンクからアカウントを有効化させてください。'<br>
+                    updated: 'アカウント情報を変更しました。'<br>
+                    update_needs_confirmation: "アカウント情報を変更しましたが、Eメールアドレスの本人確認用Eメールをお送りしましたので、中のリンクをクリックして証明してください。"<br>
+                  sessions:<br>
+                    signed_in: 'ログインしました。'<br>
+                    signed_out: 'ログアウトしました。'<br>
+                  unlocks:<br>
+                    send_instructions: 'アカウントの凍結解除方法を数分以内にメールでご連絡します。'<br>
+                    send_paranoid_instructions: 'アカウントが見つかった場合、アカウントの凍結解除方法を数分以内にメールでご連絡します。'<br>
+                    unlocked: 'アカウントを凍結解除しました。ログインしています。'<br>
+                  errors:<br>
+                    messages:<br>
+                      already_confirmed: "は既に登録済みですのでログインしてください"<br>
+                      confirmation_period_expired: "の確認期限が切れました。%{period}以内に確認する必要があります。 新しくリクエストしてください"<br>
+                      expired: "の期限が切れましたので、新しくリクエストしてください"<br>
+                      not_found: "は見つかりませんでした"<br>
+                      not_locked: "は凍結されていません"<br>
+                      not_saved:<br>
+                        one: "1 つのエラーにより %{resource} は保存されませんでした:"<br>
+                        other: "%{count} つのエラーにより %{resource} は保存されませんでした:"<br>
+                date:<br>
+                  abbr_day_names:<br>
+                  - 日<br>
+                  - 月<br>
+                  - 火<br>
+                  - 水<br>
+                  - 木<br>
+                  - 金<br>
+                  - 土<br>
+                  abbr_month_names:<br>
+                  -<br>
+                  - 1月<br>
+                  - 2月<br>
+                  - 3月<br>
+                  - 4月<br>
+                  - 5月<br>
+                  - 6月<br>
+                  - 7月<br>
+                  - 8月<br>
+                  - 9月<br>
+                  - 10月<br>
+                  - 11月<br>
+                  - 12月<br>
+                  day_names:<br>
+                  - 日曜日<br>
+                  - 月曜日<br>
+                  - 火曜日<br>
+                  - 水曜日<br>
+                  - 木曜日<br>
+                  - 金曜日<br>
+                  - 土曜日<br>
+                  formats:<br>
+                    default: "%Y/%m/%d"<br>
+                    long: "%Y年%m月%d日(%a)"<br>
+                    short: "%m/%d"<br>
+                  month_names:<br>
+                  -<br>
+                  - 1月<br>
+                  - 2月<br>
+                  - 3月<br>
+                  - 4月<br>
+                  - 5月<br>
+                  - 6月<br>
+                  - 7月<br>
+                  - 8月<br>
+                  - 9月<br>
+                  - 10月<br>
+                  - 11月<br>
+                  - 12月<br>
+                  order:<br>
+                  - :year<br>
+                  - :month<br>
+                  - :day<br>
+                datetime:<br>
+                  distance_in_words:<br>
+                    about_x_hours:<br>
+                      one: 約1時間<br>
+                      other: 約%{count}時間<br>
+                    about_x_months:<br>
+                      one: 約1ヶ月<br>
+                      other: 約%{count}ヶ月<br>
+                    about_x_years:<br>
+                      one: 約1年<br>
+                      other: 約%{count}年<br>
+                    almost_x_years:<br>
+                      one: 1年弱<br>
+                      other: "%{count}年弱"<br>
+                    half_a_minute: 30秒前後<br>
+                    less_than_x_minutes:<br>
+                      one: 1分以内<br>
+                      other: "%{count}分未満"<br>
+                    less_than_x_seconds:<br>
+                      one: 1秒以内<br>
+                      other: "%{count}秒未満"<br>
+                    over_x_years:<br>
+                      one: 1年以上<br>
+                      other: "%{count}年以上"<br>
+                    x_days:<br>
+                      one: 1日<br>
+                      other: "%{count}日"<br>
+                    x_minutes:<br>
+                      one: 1分<br>
+                      other: "%{count}分"<br>
+                    x_months:<br>
+                      one: 1ヶ月<br>
+                      other: "%{count}ヶ月"<br>
+                    x_seconds:<br>
+                      one: 1秒<br>
+                      other: "%{count}秒"<br>
+                  prompts:<br>
+                    day: 日<br>
+                    hour: 時<br>
+                    minute: 分<br>
+                    month: 月<br>
+                    second: 秒<br>
+                    year: 年<br>
+                errors:<br>
+                  format: "%{attribute}%{message}"<br>
+                  messages:<br>
+                    accepted: を受諾してください<br>
+                    blank: を入力してください<br>
+                    present: は入力しないでください<br>
+                    confirmation: と%{attribute}の入力が一致しません<br>
+                    empty: を入力してください<br>
+                    equal_to: は%{count}にしてください<br>
+                    even: は偶数にしてください<br>
+                    exclusion: は予約されています<br>
+                    greater_than: は%{count}より大きい値にしてください<br>
+                    greater_than_or_equal_to: は%{count}以上の値にしてください<br>
+                    inclusion: は一覧にありません<br>
+                    invalid: は不正な値です<br>
+                    less_than: は%{count}より小さい値にしてください<br>
+                    less_than_or_equal_to: は%{count}以下の値にしてください<br>
+                    model_invalid: "バリデーションに失敗しました: %{errors}"<br>
+                    not_a_number: は数値で入力してください<br>
+                    not_an_integer: は整数で入力してください<br>
+                    odd: は奇数にしてください<br>
+                    required: を入力してください<br>
+                    taken: は既に存在します<br>
+                    too_long: は%{count}文字以内で入力してください<br>
+                    too_short: は%{count}文字以上で入力してください<br>
+                    wrong_length: は%{count}文字で入力してください<br>
+                    other_than: は%{count}以外の値にしてください<br>
+                    sns_allready_linked: アカウントは既にユーザーに連携されております<br>
+                  template:<br>
+                    body: 次の項目を確認してください<br>
+                    header:<br>
+                      one: "%{model}にエラーが発生しました"<br>
+                      other: "%{model}に%{count}個のエラーが発生しました"<br>
+                helpers:<br>
+                  select:<br>
+                    prompt: 選択してください<br>
+                  submit:<br>
+                    create: 登録する<br>
+                    submit: 保存する<br>
+                    update: 更新する<br>
+                  page_entries_info:<br>
+                    one_page:<br>
+                      zero: "<b>該当データがありません。</b>"<br>
+                      one: "<b>1件中 1-1 件を表示</b>"<br>
+                      display_entries: '%{entry_name}の1-%{count}件を表示中 / 合計%{count}件'<br>
+                    more_pages:<br>
+                      display_entries: '%{entry_name}の%{first}-%{last}件を表示中 / 合計%{total}件'<br>
+                number:<br>
+                  currency:<br>
+                    format:<br>
+                      delimiter: ","<br>
+                      format: "%n%u"<br>
+                      precision: 0<br>
+                      separator: "."<br>
+                      significant: false<br>
+                      strip_insignificant_zeros: false<br>
+                      unit: 円<br>
+                  format:<br>
+                    delimiter: ","<br>
+                    precision: 3<br>
+                    separator: "."<br>
+                    significant: false<br>
+                    strip_insignificant_zeros: false<br>
+                  human:<br>
+                    decimal_units:<br>
+                      format: "%n %u"<br>
+                      units:<br>
+                        billion: 十億<br>
+                        million: 百万<br>
+                        quadrillion: 千兆<br>
+                        thousand: 千<br>
+                        trillion: 兆<br>
+                        unit: ''<br>
+                    format:<br>
+                      delimiter: ''<br>
+                      precision: 3<br>
+                      significant: true<br>
+                      strip_insignificant_zeros: true<br>
+                    storage_units:<br>
+                      format: "%n%u"<br>
+                      units:<br>
+                        byte: バイト<br>
+                        gb: GB<br>
+                        kb: KB<br>
+                        mb: MB<br>
+                        tb: TB<br>
+                  percentage:<br>
+                    format:<br>
+                      delimiter: ''<br>
+                      format: "%n%"<br>
+                  precision:<br>
+                    format:<br>
+                      delimiter: ''<br>
+                support:<br>
+                  array:<br>
+                    last_word_connector: と<br>
+                    two_words_connector: と<br>
+                    words_connector: と<br>
+                time:<br>
+                  am: 午前<br>
+                  formats:<br>
+                    default: "%Y/%m/%d %H:%M:%S"<br>
+                    long: "%Y年%m月%d日(%a) %H時%M分%S秒 %z"<br>
+                    short: "%y/%m/%d %H:%M"<br>
+                  pm: 午後<br>
+                views:<br>
+                  pagination:<br>
+                    first: 先頭<br>
+                    last: 最終<br>
+                    previous: 前ページ<br>
+                    next: 次ページ<br>
+                    truncate: "..."
+                  </p>
+                </div>
+                これで英語だったエラーメッセージが日本語で表示されているので確認してみてください。<br>
+                <br>
+                以上で、LESSON1は終了です。<br>
+                説明が足らない部分もあると思いますがこれはわざとやっているので自分で調べて調べる癖を付けてましょう。
+                それでも分からなければ気軽に質問してください！！
+      </p>
+  </div>
+</div>

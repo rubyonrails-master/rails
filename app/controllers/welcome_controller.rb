@@ -3,64 +3,49 @@ class WelcomeController < ApplicationController
   def index
   end
 
-  def environment
+  def lesson1
   end
 
-  def top
+  def lesson2
   end
 
-  def login
+  def lesson3
   end
 
-  def bootstrap
+  def lesson4
   end
 
-  def blog
+  def lesson5
   end
 
-  def release
+  def lesson6
   end
 
-  def contact
+  def lesson7
   end
 
-  def authentication
+  def lesson8
   end
 
-  def github
+  def lesson9
   end
 
-  def twitter
+  def lesson10
   end
 
-  def error
+  def lesson11
   end
 
-  def admin
+  def lesson12
   end
 
-  def comment
+  def lesson13
   end
 
-  def like
+  def lesson14
   end
 
-  def message
-  end
-
-  def amazon_s3
-  end
-
-  def notification
-  end
-
-  def ranking
-  end
-
-  def purchase
-  end
-
-  def evaluation
+  def lesson15
   end
 
 end

@@ -1,0 +1,172 @@
+<div class="lesson">
+  <div class="main">
+    <h1>LESSON2</h1>
+      <p>
+        この章では、確認画面付きのお問い合わせフォームを作成していきます。<br>
+        イメージとしては、お問い合わせ入力画面に確認ボタンがあり確認ボタンを押下すると<br>
+        お問い合わせ確認画面へ行きその画面には戻るボタンと完了ボタンがあり、戻るボタンを押すとお問い合わせ入力画面に戻り(この時入力された情報は保持されている状態になっている)、
+        完了ボタンを押下するとお問い合わせ完了画面へ行き、お問い合わせ入力画面で入力したメールアドレス宛に「お問い合わせありがとうございました」というメールを
+        送信するところまで実装していきます。<br>
+        前回のLESSON1で作成したWorkspaceをそのまま使っても構いませんし、新しくWorkspaceを作成したい方は新しく作成してください。<br>
+        まず最初に、コントローラーとアクションの作成です。下記コマンドを実行しましょう。
+        <div class="command">
+          <p>
+            rails g controller inquiries new confirm thanks
+          </p>
+        </div>
+        お問い合わせ入力画面に当たるのがnewアクションで、お問い合わせ確認画面がconfirmアクション、お問い合わせ完了画面がthanksアクションです。<br>
+        コントローラーの名前は複数形で記述するのがrailsで決まりになっているので複数形で記述しています。<br>
+        次にルーティングの設定です。config/routes.rbを開き下記のように記述しましょう。
+        <div class="code">
+          <p>
+            get "inquiry" => "inquiries#new"<br>
+            post "inquiry/confirm" => "inquiries#confirm"<br>
+            post "inquiry/thanks" => "inquiries#thanks"
+          </p>
+        </div>
+        どのようなルーティングになっているか下記コマンドで確認しましょう。
+        <div class="command">
+          <p>
+            rake routes
+          </p>
+        </div>
+        次にモデルを作成するために下記コマンドを実行しましょう。
+        <div class="command">
+          <p>
+            rails g model Inquiry name email title content:text
+          </p>
+        </div>
+        <div class="command">
+          <p>
+            rails db:migrate
+          </p>
+        </div>
+        上記コマンドを実行するとdb/migrate配下にファイルが作成されているので確認しましょう。<br>
+        LESSON1で、コントローラーのアクションへ行きデータベースとのやりとりがある場合はモデルへ行くと言いましたが
+        これはそのためのモデルです。そしてお問い合わせ入力画面では、名前(name)、メールアドレス(email)、タイトル(title)、内容(content)の入力欄を
+        作成したいのでデータベースに保存するカラムとして、name, email, title, contentと記述しています。<br>
+        流れとしては、コントローラーのアクションにデータベースを操作する記述、例えばデータベースから値を全て取得したい場合はアクションの中にその命令を記述します。
+        その後に、モデルへ行きモデルがその命令に従ってデータベースから値を全て取得してきてコントローラーへ戻ってきます。その後にビューへ行き
+        ビューで取得してきた全ての値を表示するという記述をすればそれがブラウザで表示されるようになります。データベースとのやりとりがある場合はこのような流れになっています。<br>
+        またcontentの後にtextと記述がありますが、これはデータ型を指定しています。name, email, titleには何も記述していませんが何も記述しない場合はデフォルトでstringというデータ型が指定されます。
+        これは簡単に言うと、短い文字列ならstring型、長い文字列ならtext型と指定します。他にもデータ型の種類はあるので調べてみましょう。<br>
+        「rails db:migrate」コマンドは未実行のマイグレーションファイルを実行するというコマンドです。
+        マイグレーションファイルは、db/migrate配下に作成されたファイルのことです。<br>
+        <br>
+        次にお問い合わせ入力画面を作成します。
+        app/controllers/inquiries_controller.rbを開いてnewアクションに下記のように記述しましょう。
+        <div class="code">
+          <p>
+            def new<br>
+            　@inquiry = Inquiry.new<br>
+            end
+          </p>
+        </div>
+        「@inquiry」は変数で箱のようなものです。「Inquiry.new」の「Inquiry」はモデル名です。「new」でそのモデルオブジェクトを作成しています。
+        何を言ってるのか分からないと思いますので「Inquiry.new」で何が作成されているのか下記コマンドを実行して見てみましょう。
+        <div class="command">
+          <p>
+            rails c<br>
+            <br>
+            Inquiry.new
+          </p>
+        </div>
+        そうすると、id: nil, name: nil, email: nil, title: nil, content: nil, created_at: nil, updated_at: nil<br>
+        このような記述があると思います。nilというのは空という意味です。<br>
+        イメージとしては、この空の値たちを「@inquiry」という変数(箱)に格納してビューでこれを元に入力欄を作成してユーザがー入力欄に入力したものが
+        データベースに保存されていきます。<br>
+        それでは、次にビューを作成します。app/views/new.html.erbファイルを開き下記のように記述します。
+        <div class="code">
+          <p>
+            &lt;h1&gt;お問い合わせ入力画面&lt;/h1&gt;<br>
+            <%= form_for @inquiry, :url => inquiry_confirm_path do |f| %><br>
+             　<%= f.label "名前" %><br>
+             　<%= f.text_field :name %><br>
+             　<%= f.label :email %><br>
+             　<%= f.email_field :email %><br>
+             　<%= f.label "タイトル" %><br>
+             　<%= f.text_field :title %><br>
+             　<%= f.label "内容" %><br>
+             　<%= f.text_area :content %><br>
+             　<%= f.submit %><br>
+            <% end %>
+          </p>
+        </div>
+        入力欄が出来ているのでブラウザで確認してみましょう。<br>
+        「form_for」でフォームを作成しています。「:url => inquiry_confirm_path」でフォームの送信先を指定しています。<br>
+        あとは、ラベルと入力欄とボタンを作成してるだけです。<br>
+        次に確認画面を作成するので、app/controllers/inquiries_controller.rbのconfirmアクションを下記のように記述します。
+        <div class="code">
+          <p>
+            def confirm
+            　@inquiry = Inquiry.new(inquiry_params)
+            　　if @inquiry.invalid?
+            　　　render "new"
+            　　end
+            end
+          </p>
+        </div>
+        また、保存する値はそのアクションには記述せず別で記述します。<br>
+        class InquiriesController < ApplicationController　〜　end間の最下行に下記のように記述します。
+        <div class="code">
+          <p>
+            private<br>
+            <br>
+            def inquiry_params<br>
+            　params.require(:inquiry).permit(:name, :email, :title, :content)<br>
+            end
+          </p>
+        </div>
+        次にビューを作成します。app/views/inquiries/confirm.html.erbを開き以下のように記述しましょう。
+        <div class="code">
+          <p>
+            &lt;h2&gt;以下の内容で、送信してもよろしいですか？&lt;/h2&gt;<br>
+            <br>
+            <%= form_for @inquiry, :url => inquiry_thanks_path do |f| %><br>
+            <%= f.hidden_field :name %><br>
+            <%= f.hidden_field :email %><br>
+            <%= f.hidden_field :title %><br>
+            <%= f.hidden_field :content %><br>
+            &lt;p&gt;名前:<%= @inquiry.name %>&lt;/p&gt;<br>
+            &lt;p&gt;メールアドレス:<%= @inquiry.email %>&lt;/p&gt;<br>
+            &lt;p&gt;タイトル:<%= @inquiry.title %>&lt;/p&gt;<br>
+            &lt;p&gt;本文:<%= @inquiry.content %>&lt;/p&gt;<br>
+            <%= f.submit "登録する" %><br>
+            <% end %><br>
+            <br>
+            <%= form_for(@inquiry, url: inquiry_path, method: 'get') do |f| %><br>
+            <%= f.hidden_field :name %><br>
+            <%= f.hidden_field :email %><br>
+            <%= f.hidden_field :title %><br>
+            <%= f.hidden_field :content %><br>
+            <%= f.submit "戻る", name: 'back' %><br>
+            <% end %>
+          </p>
+        </div>
+        登録するボタンを押下したら、inquiry_thanks_pathつまりthanksアクションに行きます。
+        戻るボタンを押下したら、inquiry_pathつまりnewアクションに行きます。<br>
+        戻るボタンを押下した時、入力した値は保持されていたいので、newアクションを以下のように変更します。
+        <div class="code">
+          <p>
+            def new<br>
+            　if params[:back]<br>
+            　　@inquiry = Inquiry.new(inquiry_params)<br>
+            　else<br>
+            　　@inquiry = Inquiry.new<br>
+            　end<br>
+            end
+          </p>
+        </div>
+
+
+
+
+
+
+
+
+
+
+      </p>
+  </div>
+</div>

@@ -45,7 +45,6 @@ group :development do
   gem 'spring'
 end
 gem "devise"
-gem "bootstrap-sass"
 gem 'letter_opener', '~> 1.4', '>= 1.4.1'
 gem 'devise_invitable', '~> 1.7'
 gem 'rails_12factor', group: :production

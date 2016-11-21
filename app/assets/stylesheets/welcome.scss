@@ -1,3 +1,102 @@
-// Place all the styles related to the welcome controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+body {
+  background: radial-gradient(#F2B9A1, #EA6264) fixed;
+  margin: 0;
+  padding-bottom: 70px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', '游ゴシック  Medium', meiryo, sans-serif;
+}
+header {
+  width: 100%;
+  position: fixed;
+  background: radial-gradient(#F2B9A1, #EA6264) fixed;
+  overflow: hidden;
+}
+.header-container {
+  margin: auto;
+}
+#header-left {
+  width: 50%;
+  float: left;
+  text-align: center;
+}
+#header-left a {
+  text-decoration: none;
+  color: #CC0000;
+}
+#header-right {
+  width: 50%;
+  float: right;
+  margin-top: 15px;
+  font-size: 18px;
+}
+#header-right li {
+  list-style: none;
+  text-align: center;
+  margin-right: 20px;
+  overflow: hidden;
+}
+#header-right a {
+  color: orange;
+  text-decoration: none;
+}
+
+.top-img {
+  width: 100%;
+  margin-bottom: 30px;
+  padding-top: 80px;
+  overflow: hidden;
+}
+.top-img img {
+  width: 100%;
+}
+
+#table-of-contents {
+  max-width: 980px;
+  margin: auto;
+  background: white;
+  padding: 30px 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+#main-table{
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 260px;
+}
+#main-table li {
+  width: 33%;
+  line-height: 40px;
+  list-style: none;
+}
+#main-table a {
+  text-decoration: none;
+}
+.premium {
+  color: orange;
+}
+.free {
+  color: rgb(92, 81, 79);
+}
+
+#no-finish {
+  text-align: center;
+  font-size: 14px;
+}
+
+
+@media screen and ( max-width: 600px ), ( max-device-width: 480px ) {
+  .container {
+    width: 100%;
+  }
+  #table-of-contents {
+    width: 100%;
+  }
+  #main-table {
+    height: 400px;
+  }
+  #main-table li {
+    width: 50%;
+  }
+}
