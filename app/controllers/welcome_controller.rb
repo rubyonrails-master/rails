@@ -39,13 +39,4 @@ class WelcomeController < ApplicationController
   def lesson12
   end
 
-  def lesson13
-  end
-
-  def lesson14
-  end
-
-  def lesson15
-  end
-
 end

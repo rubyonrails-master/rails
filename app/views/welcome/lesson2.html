@@ -79,17 +79,17 @@
         <div class="code">
           <p>
             &lt;h1&gt;お問い合わせ入力画面&lt;/h1&gt;<br>
-            <%= form_for @inquiry, :url => inquiry_confirm_path do |f| %><br>
-             　<%= f.label "名前" %><br>
-             　<%= f.text_field :name %><br>
-             　<%= f.label :email %><br>
-             　<%= f.email_field :email %><br>
-             　<%= f.label "タイトル" %><br>
-             　<%= f.text_field :title %><br>
-             　<%= f.label "内容" %><br>
-             　<%= f.text_area :content %><br>
-             　<%= f.submit %><br>
-            <% end %>
+            &lt;%= form_for @inquiry, :url => inquiry_confirm_path do |f| %><br>
+             　&lt;%= f.label "名前" %><br>
+             　&lt;%= f.text_field :name %><br>
+             　&lt;%= f.label :email %><br>
+             　&lt;%= f.email_field :email %><br>
+             　&lt;%= f.label "タイトル" %><br>
+             　&lt;%= f.text_field :title %><br>
+             　&lt;%= f.label "内容" %><br>
+             　&lt;%= f.text_area :content %><br>
+             　&lt;%= f.submit %><br>
+            &lt;% end %>
           </p>
         </div>
         入力欄が出来ているのでブラウザで確認してみましょう。<br>
@@ -98,11 +98,11 @@
         次に確認画面を作成するので、app/controllers/inquiries_controller.rbのconfirmアクションを下記のように記述します。
         <div class="code">
           <p>
-            def confirm
-            　@inquiry = Inquiry.new(inquiry_params)
-            　　if @inquiry.invalid?
-            　　　render "new"
-            　　end
+            def confirm<br>
+            　@inquiry = Inquiry.new(inquiry_params)<br>
+            　　if @inquiry.invalid?<br>
+            　　　render "new"<br>
+            　　end<br>
             end
           </p>
         </div>
@@ -122,25 +122,25 @@
           <p>
             &lt;h2&gt;以下の内容で、送信してもよろしいですか？&lt;/h2&gt;<br>
             <br>
-            <%= form_for @inquiry, :url => inquiry_thanks_path do |f| %><br>
-            <%= f.hidden_field :name %><br>
-            <%= f.hidden_field :email %><br>
-            <%= f.hidden_field :title %><br>
-            <%= f.hidden_field :content %><br>
-            &lt;p&gt;名前:<%= @inquiry.name %>&lt;/p&gt;<br>
-            &lt;p&gt;メールアドレス:<%= @inquiry.email %>&lt;/p&gt;<br>
-            &lt;p&gt;タイトル:<%= @inquiry.title %>&lt;/p&gt;<br>
-            &lt;p&gt;本文:<%= @inquiry.content %>&lt;/p&gt;<br>
-            <%= f.submit "登録する" %><br>
-            <% end %><br>
+            &lt;%= form_for @inquiry, :url => inquiry_thanks_path do |f| %><br>
+            　&lt;%= f.hidden_field :name %><br>
+            　&lt;%= f.hidden_field :email %><br>
+            　&lt;%= f.hidden_field :title %><br>
+            　&lt;%= f.hidden_field :content %><br>
+            　　&lt;p&gt;名前:&lt;%= @inquiry.name %>&lt;/p&gt;<br>
+            　　&lt;p&gt;メールアドレス:&lt;%= @inquiry.email %>&lt;/p&gt;<br>
+            　　&lt;p&gt;タイトル:&lt;%= @inquiry.title %>&lt;/p&gt;<br>
+            　　&lt;p&gt;本文:&lt;%= @inquiry.content %>&lt;/p&gt;<br>
+            　&lt;%= f.submit "登録する" %><br>
+            &lt;% end %><br>
             <br>
-            <%= form_for(@inquiry, url: inquiry_path, method: 'get') do |f| %><br>
-            <%= f.hidden_field :name %><br>
-            <%= f.hidden_field :email %><br>
-            <%= f.hidden_field :title %><br>
-            <%= f.hidden_field :content %><br>
-            <%= f.submit "戻る", name: 'back' %><br>
-            <% end %>
+            &lt;%= form_for(@inquiry, url: inquiry_path, method: 'get') do |f| %><br>
+          　  &lt;%= f.hidden_field :name %><br>
+          　  &lt;%= f.hidden_field :email %><br>
+          　  &lt;%= f.hidden_field :title %><br>
+          　  &lt;%= f.hidden_field :content %><br>
+          　  &lt;%= f.submit "戻る", name: 'back' %><br>
+            &lt;% end %>
           </p>
         </div>
         登録するボタンを押下したら、inquiry_thanks_pathつまりthanksアクションに行きます。
@@ -157,15 +157,85 @@
             end
           </p>
         </div>
-
-
-
-
-
-
-
-
-
+        これで、登録ボタンを押下したらthanksアクションへ、戻るボタンを押下したら値が保持された状態でnewアクションへ戻るようにできました。
+        次に、app/controllers/inquiries_controller.rbを開きthanksアクションを下記のように記述しましょう。
+        <div class="code">
+          <p>
+            def thanks<br>
+            　@inquiry = Inquiry.new(inquiry_params)<br>
+            　if @inquiry.save<br>
+            　　redirect_to root_path<br>
+            　else<br>
+            　　render "new"<br>
+            　end<br>
+            end
+          </p>
+        </div>
+        保存されたらroot_pathでルートページに飛ばすようにしてそれ以外で保存されなかった場合はnewアクションに戻すようにしています。
+        これで確認画面付きのお問い合わせ画面が完成しました。
+        ここから、さらにメールを飛ばす作業を行っていきます。<br>
+        Gemfileを開き下記記述のように追記する
+        <div class="code">
+          <p>
+            gem "letter_opener_web"
+          </p>
+        </div>
+        gemを追加したので、bundle installのコマンドを実行してサーバーを再起動しましょう。<br>
+        次に下記コマンドを実行します。
+        <div class="command">
+          <p>
+            rails g mailer InquiryMailer
+          </p>
+        </div>
+        次に、app/mailers/inquiry_mailer.rbファイルを開き下記のように記述します。
+        <div class="code">
+          <p>
+            def inquiry_mail(inquiry)<br>
+            　@inquiry = inquiry<br>
+            　mail to: inquiry.email, subject: "お問い合わせありがとうございます"<br>
+            end
+          </p>
+        </div>
+        次に、app/controllers/inquiry_controller.rbを開きcreateアクションのsaveが記述されているしたの行に下記を追記します。
+        <div class="code">
+          <p>
+            InquiryMailer.inquiry_mail(@inquiry).deliver
+          </p>
+        </div>
+        次に、config/routes.rbを開き下記のように記述します。
+        <div class="code">
+          <p>
+            if Rails.env.development?<br>
+            　mount LetterOpenerWeb::Engine, at: "/letter_opener"<br>
+            end
+          </p>
+        </div>
+        次に、メールの本文を記述していくので、app/views/inquiry_mailer配下に、inquiry_mail.text.erbファイルを作成し下記のように記述します。
+        <div class="code">
+          <p>
+            お問い合わせありがとうございました。<br>
+            名前：&lt;%= @inquiry.name %><br>
+            メールアドレス：&lt;%= @inquiry.email %><br>
+            タイトル：&lt;%= @inquiry.title %><br>
+            内容：&lt;%= @inquiry.content %>
+          </p>
+        </div>
+        最後に、config/emvironments/development.rbファイルを開き下記のように記述する。
+        <div class="code">
+          <p>
+            config.action_mailer.default_url_options = { host: "localhost:3000" }<br>
+            config.action_mailer.delivery_method = :letter_opener_web
+          </p>
+        </div>
+        これで、お問い合わせをした際に、「/letter_opener」にアクセスするとメールが確認できるはずです。
+        サーバーを再起動して確認してみてください。<br>
+        以上で、Lesson2は終了です。<br>
+        <br>
+        課題<br>
+        新しいアプリケーションを作成又は今回作成したものでも構いませんが
+        お問い合わせをした際に、今回のようにお問い合わせ入力画面で入力したメールアドレス宛に
+        お問い合わせありがとうございましたメールを送信と
+        自分のメールアドレス宛にお問い合わせを受け付けましたというメール同時に送れるように実装してください。
 
       </p>
   </div>

@@ -1,0 +1,118 @@
+<div class="lesson">
+  <div class="main">
+    <h1>LESSON3</h1>
+      <p>
+        この章では、ブログ機能を作成していきます。
+        新しくアプリケーションを作成しても既存のものを使用してもどちらでも構いません。
+        それでは、作成しましょう。<br>
+        まず、config/routes.rbを開き下記のように記述しましょう。
+        <div class="code">
+          <p>
+            resources :blogs
+          </p>
+        </div>
+        rake routesコマンドで確認すると色々自動でパスが生成されているのが分かるかと思います。<br>
+        次に、コントローラーとモデルを作成します。
+        <div class="command">
+          <p>
+            rails g controller blogs new create index show edit update destroy
+          </p>
+        </div>
+        <div class="command">
+          <p>
+            rails g model Blog title content:text
+          </p>
+        </div>
+        作成されたコントローラーを開き下記のように記述しましょう。
+        <div class="code">
+          <p>
+            def new<br>
+            　@blog = Blog.new<br>
+            end<br>
+            <br>
+            def create<br>
+            　@blog = Blog.new(blog_params)<br>
+            　if @blog.valid?<br>
+            　　render "new"<br>
+            　else if @blog.save<br>
+            　　redirect_to blogs_path<br>
+            　else<br>
+            　render "new"<br>
+            　end<br>
+            end<br>
+            <br>
+            def index<br>
+            　@blog = Blog.all<br>
+            end<br>
+            <br>
+            def show<br>
+            　@blog = Blog.find params[:id]<br>
+            end<br>
+            <br>
+            def edit<br>
+            　@blog = Blog.find params[:id]<br>
+            end<br>
+            <br>
+            def update<br>
+            　@blog = Blog.find params[:id]<br>
+            　if @blog.valid<br>
+            　　render "edit"<br>
+            　else if @blog.update<br>
+            　　redirect_to blogs_path<br>
+            　else<br>
+            　　render "edit"<br>
+            　end<br>
+            end<br>
+            <br>
+            def destroy<br>
+            　@blog = Blog.find params[:id]<br>
+            　@blog.destroy<br>
+            　redirect_to blogs_path<br>
+            end<br>
+            <br>
+            private<br>
+            def blog_params<br>
+            　params.require(:blog).permit(:image, :title, :content)<br>
+            end
+          </p>
+        </div>
+        次にviewの作成です。<br>
+        app/views/blogs/new.html.erb
+        <div class="code">
+          <p>
+            &lt;h1&gt;ブログ入力画面&lt;/h1&gt;<br>
+            &lt;%= form_for @blog do |f| %><br>
+             　&lt;%= f.label "タイトル" %><br>
+             　&lt;%= f.text_field :title %><br>
+             　&lt;%= f.label "内容" %><br>
+             　&lt;%= f.text_area :content %><br>
+             　&lt;%= f.submit %><br>
+            &lt;% end %>
+          </p>
+        </div>
+        app/views/blogs/index.html.erb
+        <div class="code">
+          <p>
+            &lt;h1&gt;ブログ一覧画面&lt;/h1&gt;<br>
+            &lt;%= link_to "ブログ作成", 
+            &lt;% @blog.each do |blog| %><br>
+             　&lt;%= .label "タイトル" %><br>
+             　&lt;%= f.text_field :title %><br>
+             　&lt;%= f.label "内容" %><br>
+             　&lt;%= f.text_area :content %><br>
+            &lt;% end %>
+          </p>
+        </div>
+
+
+
+
+
+
+            　
+
+
+
+      </p>
+  </div>
+</div>

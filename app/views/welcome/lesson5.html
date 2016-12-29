@@ -1,0 +1,133 @@
+ローカル開発環境構築　手順
+
+VirtualBox, Vagrant, git-bashというツールを使用して構築する
+
+VirtualBoxとは、使用しているPC上に仮想的なPCを作成するソフトウェア
+
+Vagrantとは、仮想マシンを管理するツール。仮想マシンの作成、起動、停止などを行う
+
+git-bashとは、コマンドプロプト
+
+VirtualBoxのインストール
+https://www.virtualbox.org/wiki/Downloads
+
+Vagrantのインストール
+https://www.vagrantup.com/downloads.html
+
+git-bashのインストール
+https://git-scm.com/download/win
+
+
+仮想マシンの作成
+git-bashを開き以下のコマンドを実行する
+vagrant box add ubuntu https://github.com/kraksoft/vagrant-box-ubuntu/releases/download/14.04/ubuntu-14.04-amd64.box
+
+Vagrantの仮想環境を管理するフォルダを作成し初期化を行う
+mkdir vagrant
+cd vagrant
+vagrant init ubuntu
+
+vagrant init ubuntu コマンドでvagrantfileが生成される
+
+lsコマンドでカレントディレクトリ配下にどんなフォルダやファイルがあるのか確認できる
+
+vagrantfileの編集　追記する
+vi Vagrantfile
+
+ config.vm.network :"forwarded_port", guest: 3000, host: 3000
+ config.vm.synced_folder "../vagrant/workspace", "/home/vagrant/workspace", :create => true
+
+
+vagrant用のプラグインをインストール
+vagrant plugin install vagrant-vbguest
+
+vagrantを起動する
+vagrant up
+
+仮想環境上のターミナルに接続する
+vagrant ssh
+
+
+ソフトウェアを管理するapt-getを最新にする
+sudo apt-get update
+sudo apt-get upgrade
+
+開発に必要なソフトをインストール
+sudo apt-get install git -y
+sudo apt-get install curl g++ make vim -y
+sudo apt-get install zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt-dev -y
+sudo apt-get install sqlite3 libsqlite3-dev nodejs imagemagick libmagickwand-dev -y
+
+Rubyを管理するrbenvをインストール
+git clone git://github.com/rbenv/rbenv.git ~/.rbenv
+
+rbenvがインストール出来たら初期設定を行う
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+source ~/.bash_profile
+
+ruby-buildのインストール
+mkdir -p ~/.rbenv/plugins
+cd ~/.rbenv/plugins
+git clone git://github.com/rbenv/ruby-build.git
+
+rubyバージョン2.3.0をインストール
+rbenv install 2.3.0
+
+インストールしたrubyのバージョン2.3.0をデフォルトで使用する設定
+rbenv global 2.3.0
+rbenv rehash
+
+railsのインストール
+sudo apt-get install rails
+
+postgresqlをインストール
+ubuntu14では、デフォルトでpostgresql9.3がインストールされているので9.4をインストールする
+sudo apt-get remove -y postgresql-9.3
+sudo sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
+wget --quiet -O - https://postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update -y
+sudo apt-get install -y postgresql-9.4 libpq-dev
+
+インストールができたらpostgresqlを起動
+sudo /etc/init.d/postgresql start
+
+workspaceに移動
+cd ~/workspace
+
+railsのアプリケーションを作成
+rails new test -d postgresql
+
+testというフォルダが生成されるので移動
+cd test
+
+bundlerをインストール
+gem install bundler
+
+bundle install
+
+データベースの設定
+sudo ln -s /tmp/.s.PGSQL.5432 /var/run/postgresql/.s.PGSQL.5432
+sudo vim /etc/postgresql/9.4/main/postgresql.conf
+
+vimエディタが起動するので
+port = 5433をport = 5432書き換える
+
+vagrantユーザーを作成する
+sudo -u postgres psql psql (9.4.9)
+CREATE USER vagrant SUPERUSER;
+
+データベースの作成
+rake db:create
+
+railsサーバーを起動して動作確認
+rails s -b 0.0.0.0
+
+railsサーバーが立ち上がったら、http://localhost:3000 にアクセス
+
+以上でローカル開発環境完了
+
+
+
+下記URLにアクセスしてAtomというエディタをインストールしといて下さい
+https://atom.io/
